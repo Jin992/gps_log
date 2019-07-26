@@ -16,11 +16,11 @@ def _scan_ports():
         ports = ['COM%s' % (i + 1) for i in range(256)]
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
-        patterns = ('/dev/tty[A-Za-z]*', '/dev/ttyUSB*')
+        patterns = ('/dev/ttyUSB*', '/dev/ttyUSB*')
         ports = [glob.glob(pattern) for pattern in patterns]
         ports = [item for sublist in ports for item in sublist]  # flatten
     elif sys.platform.startswith('darwin'):
-        patterns = ('/dev/*serial*', '/dev/ttyUSB*', '/dev/ttyS*')
+        patterns = ('/dev/ttyUSB*')
         ports = [glob.glob(pattern) for pattern in patterns]
         ports = [item for sublist in ports for item in sublist]  # flatten
     else:
@@ -29,7 +29,7 @@ def _scan_ports():
 
 def logfilename():
     now = datetime.datetime.now()
-    return '/home/pi/Desktop/NMEA_%0.4d-%0.2d-%0.2d.txt' % \
+    return '/home/jin/Desktop/gps_log_git/NMEA_%0.4d-%0.2d-%0.2d.txt' % \
                 (now.year, now.month, now.day)            
 
 try:

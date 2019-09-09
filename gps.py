@@ -7,6 +7,7 @@ epoch = datetime.datetime.utcfromtimestamp(0)
 gps_qual = 0
 num_sats = 0
 alt = 0.0   
+layoutFile = "/tmp/missionPoint.txt"
 
 def unix_time(dt):
     return (dt - epoch).total_seconds()
@@ -29,8 +30,10 @@ def _scan_ports():
 
 def logfilename():
     now = datetime.datetime.now()
-    return '/home/pi/Desktop/NMEA_%0.4d-%0.2d-%0.2d.txt' % \
-                (now.year, now.month, now.day)            
+    #return '/home/pi/Desktop/NMEA_%0.4d-%0.2d-%0.2d.txt' % \
+    #            (now.year, now.month, now.day)
+    return './NMEA_%0.4d-%0.2d-%0.2d.txt' % \
+                (now.year, now.month, now.day)           
 
 try:
     while True:
@@ -72,15 +75,22 @@ try:
                             msg = pynmea2.parse(line)
                             local_time = msg.datetime.replace(tzinfo=timezone.utc).astimezone(tz=None)
                             if string_cnt < 50:
-                                log_string += str(local_time.strftime('%Y-%m-%d %H:%M:%S.%f')[0:21] + "," + str(int(unix_time(msg.datetime))) + "," + str("{0:.6f}".format(msg.latitude)) + "," + str("{0:.6f}".format(msg.longitude)) + "," + str(alt) + "," + str(gps_qual) + "," + str(num_sats) + "\r\n")
+                                log_string += str(local_time.strftime('%Y-%m-%d %H:%M:%S.%f')[0:21] + "," + str(float(unix_time(msg.datetime))) + "," + str("{0:.6f}".format(msg.latitude)) + "," + str("{0:.6f}".format(msg.longitude)) + "," + str(alt) + "," + str(gps_qual) + "," + str(num_sats) + "\r\n")
                                 string_cnt += 1
                             else:
-                                log_string += str(local_time.strftime('%Y-%m-%d %H:%M:%S.%f')[0:21] + "," + str(int(unix_time(msg.datetime))) + "," + str("{0:.6f}".format(msg.latitude)) + "," + str("{0:.6f}".format(msg.longitude)) + "," + str(alt) + "," + str(gps_qual) + "," + str(num_sats) + "\r\n")
+                                log_string += str(local_time.strftime('%Y-%m-%d %H:%M:%S.%f')[0:21] + "," + str(float(unix_time(msg.datetime))) + "," + str("{0:.6f}".format(msg.latitude)) + "," + str("{0:.6f}".format(msg.longitude)) + "," + str(alt) + "," + str(gps_qual) + "," + str(num_sats) + "\r\n")
                                 with open(outfname, 'a') as f:
                                     f.write(log_string)
                                     f.close()
                                 log_string = ''
                                 string_cnt = 0
+                        if os.path.isfile(layoutFile):
+                            fp = open(layoutFile, 'r')
+                            line = fp.readline()
+                            fp.close()
+                            os.remove(layoutFile)
+                            log_string += str(line + "\r\n")
+                            string_cnt += 1
 
             except Exception as e:
                 sys.stderr.write('Error reading serial port %s: %s\n' % (type(e).__name__, e))

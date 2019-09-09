@@ -29,7 +29,7 @@ def _scan_ports():
 
 def logfilename():
     now = datetime.datetime.now()
-    return '/home/jin/Desktop/gps_log_git/NMEA_%0.4d-%0.2d-%0.2d.txt' % \
+    return '/home/pi/Desktop/NMEA_%0.4d-%0.2d-%0.2d.txt' % \
                 (now.year, now.month, now.day)            
 
 try:
@@ -75,7 +75,6 @@ try:
                                 log_string += str(local_time.strftime('%Y-%m-%d %H:%M:%S.%f')[0:21] + "," + str(int(unix_time(msg.datetime))) + "," + str("{0:.6f}".format(msg.latitude)) + "," + str("{0:.6f}".format(msg.longitude)) + "," + str(alt) + "," + str(gps_qual) + "," + str(num_sats) + "\r\n")
                                 string_cnt += 1
                             else:
-                                print("string_cnt = ", string_cnt, " write to log")
                                 log_string += str(local_time.strftime('%Y-%m-%d %H:%M:%S.%f')[0:21] + "," + str(int(unix_time(msg.datetime))) + "," + str("{0:.6f}".format(msg.latitude)) + "," + str("{0:.6f}".format(msg.longitude)) + "," + str(alt) + "," + str(gps_qual) + "," + str(num_sats) + "\r\n")
                                 with open(outfname, 'a') as f:
                                     f.write(log_string)
